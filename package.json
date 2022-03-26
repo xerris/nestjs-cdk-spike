@@ -5,8 +5,8 @@
     "cdk-nest-api-spike": "bin/cdk-nest-api-spike.js"
   },
   "scripts": {
-    "build": "tsc",
-    "watch": "tsc -w",
+    "build": "rm -R bin && tsc",
+    "watch": "rm -R bin && tsc -w",
     "test": "jest",
     "cdk": "cdk",
     "watch-api": "cd lambda-source && npm run start:dev && cd .."
@@ -17,23 +17,25 @@
     "@nestjs/core": "^8.0.0",
     "@nestjs/platform-express": "^8.0.0",
     "@shiftcoders/dynamo-easy": "^7.1.0",
+    "@types/jest": "^26.0.10",
+    "@types/node": "10.17.27",
+    "aws-cdk": "2.17.0",
     "aws-lambda": "^1.0.7",
     "aws-sdk": "^2.1096.0",
     "aws-serverless-express": "^3.4.0",
     "config": "^3.3.7",
+    "jest": "^26.4.2",
     "module": "^1.2.5",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0",
-    "@types/jest": "^26.0.10",
-    "@types/node": "10.17.27",
-    "jest": "^26.4.2",
     "ts-jest": "^26.2.0",
-    "aws-cdk": "2.17.0",
     "ts-node": "^9.0.0",
     "typescript": "~3.9.7"
   },
   "dependencies": {
+    "@aws-cdk/aws-dynamodb": "^1.149.0",
+    "@aws-cdk/aws-lambda-nodejs": "^1.149.0",
     "aws-cdk-lib": "2.17.0",
     "constructs": "^10.0.0",
     "source-map-support": "^0.5.16"

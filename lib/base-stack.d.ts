@@ -1,0 +1,31 @@
+import cdk = require('@aws-cdk/core');
+import iam = require('@aws-cdk/aws-iam');
+import lambda = require('@aws-cdk/aws-lambda');
+import dynamodb = require('@aws-cdk/aws-dynamodb');
+import apigateway = require('@aws-cdk/aws-apigateway');
+import { PolicyStatement } from '@aws-cdk/aws-iam';
+import { Configuration } from './configuration';
+import { ILayerVersion } from '@aws-cdk/aws-lambda/lib/layers';
+export declare class BaseStack extends cdk.Stack {
+    protected zipFileLocation: string;
+    protected config: Configuration;
+    protected apiName: string;
+    protected stageName: string;
+    protected api: apigateway.RestApi;
+    private secretsPolicy;
+    private dynamoAccess;
+    private cognitoAccess;
+    private sqsAccess;
+    constructor(scope: cdk.Construct, id: string, stageName: string, config: Configuration);
+    protected createApiGateway(): apigateway.RestApi;
+    protected createLambdaLayer(id: string, fromAssetPath: string): lambda.LayerVersion;
+    protected createLambda(id: string, handler: string, fromAssetPath: string, layers?: ILayerVersion[]): lambda.Function;
+    protected createPolicyStatementForSecrets(): iam.PolicyStatement;
+    protected integrate(method: string, apiResource: apigateway.IResource, lambdaFunc: lambda.Function): void;
+    protected unsecuredIntegration(method: string, apiResource: apigateway.IResource, lambdaFunc: lambda.Function, keyName: string): void;
+    protected grantSecrets(lambda: lambda.Function): void;
+    private createDbPolicyWithArn;
+    protected grantDynamoDbAccessToLambda(table: dynamodb.Table, lambda: lambda.Function): void;
+    protected createPolicyStatementForSqs(): iam.PolicyStatement;
+    protected createCognitoAdminPolicy(): PolicyStatement;
+}
