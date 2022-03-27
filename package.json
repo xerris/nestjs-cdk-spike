@@ -9,7 +9,9 @@
     "watch": "rm -R bin && tsc -w",
     "test": "jest",
     "cdk": "cdk",
-    "watch-api": "cd lambda-source && npm run start:dev && cd .."
+    "watch-api": "cd lambda-source && npm run start:dev && cd ..",
+    "cdk:deploy": "cd lambda-source && rm -R node_modules && npm install --production && cd ..  && cdk deploy --profile xerris",
+    "cdk:destroy": "cdk destroy --profile xerris"
   },
   "devDependencies": {
     "@aws-cdk/aws-apigateway": "^1.149.0",
