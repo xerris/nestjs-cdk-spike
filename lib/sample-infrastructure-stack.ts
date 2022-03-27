@@ -4,18 +4,29 @@ import { BaseStack } from './base-stack';
 import { Configuration } from './configuration';
 import lambda = require('@aws-cdk/aws-lambda');
 import { NodejsFunction } from '@aws-cdk/aws-lambda-nodejs';
+import { zip } from 'zip-a-folder';
 
 export class SampleInfrastructureStack extends BaseStack {
   constructor(scope: cdk.Construct, id: string, config: Configuration) {
     super(scope, id, 'sample-lambda-stack', config);
 
     let nodeModules = 'lambda-source/node_modules';
+    let zippedNodeModules = path.join(__dirname, '../../dist/nodeModules.zip');
     let singlePath = 'lambda-source/src/singleLambda';
+
+    class TestMe {
+
+      static async main() {
+        await zip(nodeModules, zippedNodeModules);
+      }
+    }
+
+    TestMe.main();
 
     const nodeModuleLayer = this.createLambdaLayer("node_modules", nodeModules);
 
     this.createLambda('test-lambda', 'index.handler', singlePath,
-      [nodeModuleLayer]);
+        [nodeModuleLayer]);
 
     // this.createLambdaLayer(
     //   'BackendLayer',
