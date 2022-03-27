@@ -22,15 +22,15 @@
   },
   "dependencies": {
     "@nestjs/common": "^8.0.0",
-    "@nestjs/core": "^8.0.0",
-    "aws-serverless-express": "^3.4.0",
-    "config": "^3.3.7",
-    "module": "^1.2.5",
-    "reflect-metadata": "^0.1.13",
-    "rimraf": "^3.0.2",
-    "rxjs": "^7.2.0"
+    "@nestjs/core": "^8.0.0"
   },
   "devDependencies": {
+    "config": "^3.3.7",
+    "module": "^1.2.5",
+    "aws-serverless-express": "^3.4.0",
+    "reflect-metadata": "^0.1.13",
+    "rimraf": "^3.0.2",
+    "rxjs": "^7.2.0",
     "@aws-cdk/aws-apigateway": "^1.149.0",
     "@nestjs/platform-express": "^8.0.0",
     "@shiftcoders/dynamo-easy": "^7.1.0",
