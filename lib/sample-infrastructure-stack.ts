@@ -1,34 +1,24 @@
 import * as cdk from '@aws-cdk/core';
+import {ILayerVersion} from "@aws-cdk/aws-lambda/lib/layers";
+import lambda = require('@aws-cdk/aws-lambda');
+import * as gateway from "@aws-cdk/aws-apigateway";
+import { Configuration } from './configuration';
 import * as path from 'path';
 import { BaseStack } from './base-stack';
-import { Configuration } from './configuration';
-import lambda = require('@aws-cdk/aws-lambda');
-import { NodejsFunction } from '@aws-cdk/aws-lambda-nodejs';
 import { zip } from 'zip-a-folder';
-import {ILayerVersion} from "@aws-cdk/aws-lambda/lib/layers";
 
 export class SampleInfrastructureStack extends BaseStack {
   constructor(scope: cdk.Construct, id: string, config: Configuration) {
     super(scope, id, 'sample-lambda-stack', config);
 
     const nodeModuleLayer = this.deployNodeModulesLayer();
-    this.deploySimpleLambda([nodeModuleLayer]);
 
-    this.createLambda("nest-api", 'lambda.handler', 'lambda-source/dist',[nodeModuleLayer]);
+    let testLambda = this.deploySimpleLambda([nodeModuleLayer]);
+    new gateway.LambdaRestApi(this, "TestEndpoint", { handler: testLambda });
 
-    // this.createNodeLambda(
-    //   'sample-lambda',
-    //   'main',
-    //   path.join(__dirname, `/../../src/index.ts`),
-    // );
-    //
-    // const myFunction = new NodejsFunction(this, 'my-function', {
-    //   memorySize: 1024,
-    //   timeout: cdk.Duration.seconds(5),
-    //   runtime: lambda.Runtime.NODEJS_14_X,
-    //   handler: 'main',
-    //   entry: path.join(__dirname, `/../../src/index.ts`),
-    // });
+    let backendApi = this.createLambda("nest-api", 'lambda.handler', 'lambda-source/dist',[nodeModuleLayer]);
+    new gateway.LambdaRestApi(this, "BackendEndApi", { handler: backendApi });
+
   }
 
   deployNodeModulesLayer(): ILayerVersion {
