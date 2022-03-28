@@ -11,20 +11,8 @@ export class SampleInfrastructureStack extends BaseStack {
   constructor(scope: cdk.Construct, id: string, config: Configuration) {
     super(scope, id, 'sample-lambda-stack', config);
 
-    let nodeModules = 'lambda-source/node_modules';
-    let zippedNodeModules = path.join(__dirname, '../../dist/nodeModules.zip');
-
-    let squishy =  new SquishMe(nodeModules, zippedNodeModules);
-    squishy.go();
-
-    const nodeModuleLayer = this.createLambdaLayer("node_modules", nodeModules);
-
+    const nodeModuleLayer = this.deployNodeModulesLayer();
     this.deploySimpleLambda([nodeModuleLayer]);
-
-    // this.createLambdaLayer(
-    //   'BackendLayer',
-    //   path.join(__dirname, `/../../node_modules`),
-    // );
 
     // this.createNodeLambda(
     //   'sample-lambda',
@@ -39,6 +27,16 @@ export class SampleInfrastructureStack extends BaseStack {
     //   handler: 'main',
     //   entry: path.join(__dirname, `/../../src/index.ts`),
     // });
+  }
+
+  deployNodeModulesLayer(): ILayerVersion {
+    let nodeModules = 'lambda-source/node_modules';
+    let zippedNodeModules = path.join(__dirname, '../../dist/nodeModules.zip');
+
+    let squishy =  new SquishMe(nodeModules, zippedNodeModules);
+    squishy.go();
+
+    return this.createLambdaLayer("node_modules", nodeModules);
   }
 
   deploySimpleLambda(layers?: ILayerVersion[]): lambda.IFunction {
