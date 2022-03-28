@@ -14,6 +14,8 @@ export class SampleInfrastructureStack extends BaseStack {
     const nodeModuleLayer = this.deployNodeModulesLayer();
     this.deploySimpleLambda([nodeModuleLayer]);
 
+    this.createLambda("nest-api", 'lambda.handler', 'lambda-source/dist',[nodeModuleLayer]);
+
     // this.createNodeLambda(
     //   'sample-lambda',
     //   'main',
