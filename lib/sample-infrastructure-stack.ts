@@ -5,6 +5,7 @@ import { Configuration } from './configuration';
 import lambda = require('@aws-cdk/aws-lambda');
 import { NodejsFunction } from '@aws-cdk/aws-lambda-nodejs';
 import { zip } from 'zip-a-folder';
+import {ILayerVersion} from "@aws-cdk/aws-lambda/lib/layers";
 
 export class SampleInfrastructureStack extends BaseStack {
   constructor(scope: cdk.Construct, id: string, config: Configuration) {
@@ -12,21 +13,13 @@ export class SampleInfrastructureStack extends BaseStack {
 
     let nodeModules = 'lambda-source/node_modules';
     let zippedNodeModules = path.join(__dirname, '../../dist/nodeModules.zip');
-    let singlePath = 'lambda-source/src/singleLambda';
 
-    class TestMe {
-
-      static async main() {
-        await zip(nodeModules, zippedNodeModules);
-      }
-    }
-
-    TestMe.main();
+    let squishy =  new SquishMe(nodeModules, zippedNodeModules);
+    squishy.go();
 
     const nodeModuleLayer = this.createLambdaLayer("node_modules", nodeModules);
 
-    this.createLambda('test-lambda', 'index.handler', singlePath,
-        [nodeModuleLayer]);
+    this.deploySimpleLambda([nodeModuleLayer]);
 
     // this.createLambdaLayer(
     //   'BackendLayer',
@@ -46,5 +39,25 @@ export class SampleInfrastructureStack extends BaseStack {
     //   handler: 'main',
     //   entry: path.join(__dirname, `/../../src/index.ts`),
     // });
+  }
+
+  deploySimpleLambda(layers?: ILayerVersion[]): lambda.IFunction {
+    let singlePath = 'lambda-source/src/singleLambda';
+    return this.createLambda('test-lambda', 'index.handler', singlePath, layers);
+  }
+
+}
+
+class SquishMe {
+  sourcePath: string;
+  targetPath: string;
+
+  constructor(sourcePath: string, targetPath: string) {
+    this.sourcePath = sourcePath;
+    this.targetPath = targetPath;
+  }
+
+  async go() {
+    await zip(this.sourcePath, this.targetPath);
   }
 }
